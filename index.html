@@ -897,7 +897,7 @@ function renderQ(){
   document.getElementById('prog').style.width=((cur+1)/Qs.length*100)+'%';
   document.getElementById('q-num').textContent=String(cur+1).padStart(2,'0')+' / '+Qs.length;
   const c=document.getElementById('q-card');
-  c.style.cssText='opacity:0;transition:opacity .22s ease;pointer-events:none;';
+  c.style.cssText='opacity:0;transition:opacity .18s ease;pointer-events:none;';
   c.innerHTML=`<div class="q-mood">${q.mood}</div>
     <div class="q-text">${q.text}</div>
     <div class="q-sub">${q.sub}</div>
@@ -909,24 +909,18 @@ function renderQ(){
       </button>`).join('')}</div>`;
   requestAnimationFrame(()=>{
     c.style.opacity='1';
-    setTimeout(()=>{ c.style.pointerEvents=''; }, 280);
+    setTimeout(()=>{ c.style.pointerEvents=''; }, 200);
   });
-  /* 페이지 상단으로 — 손가락 위치와 버튼 위치 분리 */
-  window.scrollTo({top:0, behavior:'instant'});
 }
 
 function pick(i){
   if(document.activeElement) document.activeElement.blur();
-
   document.querySelectorAll('.opt-btn').forEach((b,j)=>{
     b.classList.toggle('picked',j===i);
     b.style.pointerEvents='none';
   });
   Qs[cur].opts[i].s.forEach((v,j)=>sc[j]+=v);
-
-  /* 모바일 터치가 완전히 끝난 후 렌더링 — 잔상 방지 */
-  const next = ()=>{ cur<Qs.length-1?(cur++,renderQ()):showLoading(); };
-  setTimeout(next, 600);
+  setTimeout(()=>{ cur<Qs.length-1?(cur++,renderQ()):showLoading(); }, 250);
 }
 
 /* PP: No More Loading — 3초 */
