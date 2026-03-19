@@ -119,7 +119,23 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
 .opt-check{width:20px;height:20px;border-radius:99px;background:var(--green);display:none;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:#fff;font-weight:700;}
 .opt-btn:hover{border-color:var(--navy-light);background:var(--surface2);transform:translateX(5px);box-shadow:0 4px 14px rgba(26,53,97,.1);}
 .opt-btn:hover .opt-icon{transform:scale(1.12) rotate(-4deg);}
-.opt-btn.picked{border-color:var(--navy);background:var(--surface2);transform:translateX(5px);}
+/* 모바일: focus 잔상 제거 */
+.opt-btn:focus{outline:none;}
+.opt-btn:focus:not(:focus-visible){
+  border-color:var(--border);background:var(--surface);
+  transform:none;box-shadow:0 1px 4px rgba(26,53,97,.04);
+}
+/* 전환 중 모든 인터랙션 차단 */
+.opts.no-touch .opt-btn,
+.opts.no-touch .opt-btn:hover,
+.opts.no-touch .opt-btn:active,
+.opts.no-touch .opt-btn:focus{
+  pointer-events:none !important;
+  border-color:var(--border) !important;
+  background:var(--surface) !important;
+  transform:none !important;
+  box-shadow:0 1px 4px rgba(26,53,97,.04) !important;
+}
 .opt-btn.picked .opt-label{color:var(--navy);font-weight:700;}
 .opt-btn.picked .opt-check{display:flex;}
 
@@ -901,6 +917,12 @@ function renderQ(){
 }
 
 function pick(i){
+  /* 터치한 버튼 즉시 blur — 모바일 focus 잔상 방지 */
+  if(document.activeElement) document.activeElement.blur();
+
+  const optsEl = document.querySelector('.opts');
+  if(optsEl) optsEl.classList.add('no-touch');
+
   document.querySelectorAll('.opt-btn').forEach((b,j)=>{
     b.classList.toggle('picked',j===i);
     b.style.pointerEvents='none';
