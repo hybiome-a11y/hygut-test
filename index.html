@@ -1,9 +1,19 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>나의 방구 유형은? | HYGUT</title>
+
+<!-- OG 태그 — 카카오/메타/문자 공유 시 미리보기 -->
+<meta property="og:title" content="나의 방구 유형은? 💨 HYGUT 장 건강 테스트">
+<meta property="og:description" content="방귀가 잦거나 냄새가 심한 분이라면 주목 👀 10문항으로 찾는 나의 장 건강 유형 + 맞춤 처방전 발행">
+<meta property="og:url" content="https://hygut-test.vercel.app">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="나의 방구 유형은? 💨 HYGUT">
+<meta name="twitter:description" content="10문항으로 찾는 나의 장 건강 유형 + 맞춤 처방전 발행">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;900&display=swap" rel="stylesheet">
 <style>
 /*
@@ -992,9 +1002,7 @@ function toggleAcc(id){
 function shareResult(){
   const n=document.getElementById('r-name').firstChild.textContent;
   /* 배포 후엔 window.location.href가 실제 URL로 대체됨 */
-  const pageUrl = window.location.href.includes('localhost') || window.location.protocol === 'file:'
-    ? 'https://hygut.co.kr/fart-test'  /* 실제 배포 URL로 교체 필요 */
-    : window.location.href;
+  const pageUrl = 'https://hygut-test.vercel.app';
   const txt=`나 방구 유형 테스트 했는데\n"${n}" 나옴 ㅋㅋㅋ\n\n너는? 👉 ${pageUrl}`;
   if(navigator.share){
     navigator.share({title:'나의 방구 유형은? | HYGUT',url:pageUrl,text:`방구 유형 테스트 결과: ${n}`});
