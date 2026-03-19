@@ -878,7 +878,7 @@ function renderQ(){
   document.getElementById('prog').style.width=((cur+1)/Qs.length*100)+'%';
   document.getElementById('q-num').textContent=String(cur+1).padStart(2,'0')+' / '+Qs.length;
   const c=document.getElementById('q-card');
-  c.style.cssText='opacity:0;transform:translateY(14px);transition:opacity .3s,transform .3s;';
+  c.style.cssText='opacity:0;transform:translateY(14px);transition:opacity .3s,transform .3s;pointer-events:none;';
   c.innerHTML=`<div class="q-mood">${q.mood}</div>
     <div class="q-text">${q.text}</div>
     <div class="q-sub">${q.sub}</div>
@@ -888,7 +888,12 @@ function renderQ(){
         <span class="opt-label">${o.t}</span>
         <span class="opt-check">✓</span>
       </button>`).join('')}</div>`;
-  requestAnimationFrame(()=>{ c.style.opacity='1'; c.style.transform='translateY(0)'; });
+  requestAnimationFrame(()=>{
+    c.style.opacity='1';
+    c.style.transform='translateY(0)';
+    /* 전환 완료 후 pointer-events 복구 — hover 잔상 방지 */
+    setTimeout(()=>{ c.style.pointerEvents=''; }, 350);
+  });
 }
 
 function pick(i){
