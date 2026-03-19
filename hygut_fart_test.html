@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나의 방구 유형은? | HYGUT</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+/*
+PP 적용 체크리스트
+✓ Casual Concept    — 전문용어 → 일상어 (장내 세균 다양성 → "장 속 주민 수")
+✓ Minimum Features  — 결과화면 정보 위계 단순화
+✓ One Thing/Page    — 화면당 핵심 메시지 1개
+✓ Easy to Answer    — 퀴즈 sub 한 줄, 3초 이해
+✓ Value First       — 유형 공감 → 처방 순서
+✓ No Ads Patterns   — 처방전 프레임, 가격 없음
+✓ No More Loading   — 3초 이내
+✓ Sleek Experience  — 전환 애니메이션
+Toss 인사이트 체크리스트
+✓ 게임참여형        — "도전", "내 유형 발견" 프레임
+✓ 자기관련성        — "~이신 분이라면" 인트로 CTA
+✓ 혜택성 [대괄호]  — 처방전 핵심 신호
+✓ 3040 여성        — 루틴, 매일, 효율 키워드
+✓ 긴급성            — 처방 발행일 실시간 생성
+✓ 문구 조합 공식   — 메인(자기관련성+유형) + 보조(게임) + CTA(즉시)
+*/
+:root{
+  --bg:#F2F6FF; --surface:#FFF; --surface2:#EBF2FF; --border:#D8E6F8; --border2:#BDD3F0;
+  --navy:#1A3561; --navy-mid:#2B5092; --navy-light:#4A7CC7;
+  --green:#1A8A58; --green-mid:#25A86C; --green-pale:#E3F5EE; --green-dim:rgba(26,138,88,.1);
+  --ink:#0D1C36; --ink-mid:#3A5070; --ink-muted:#7A92B0; --ink-dim:#B8CADF;
+  --coral:#E8504A; --amber:#F5A31F;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow-x:hidden;}
+.wrap{max-width:480px;margin:0 auto;padding:0 20px;}
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* ══ INTRO ══ */
+#s-intro{min-height:100vh;padding:48px 0 72px;animation:fadeUp .6s ease both;}
+.brand-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:36px;}
+.brand-logo{font-weight:900;font-size:19px;letter-spacing:2.5px;color:var(--navy);}
+.brand-badge{font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--navy-light);background:var(--surface2);border:1.5px solid var(--border2);padding:5px 13px;border-radius:99px;text-transform:uppercase;}
+
+.char-banner{display:flex;justify-content:center;align-items:flex-end;gap:8px;margin-bottom:24px;height:108px;}
+.char-banner svg{filter:drop-shadow(0 4px 12px rgba(26,53,97,.13));transition:transform .3s;}
+.char-banner svg:hover{transform:translateY(-6px);}
+.char-banner svg:nth-child(2){transform:translateY(-8px);}
+.char-banner svg:nth-child(3){transform:translateY(-4px);}
+
+.intro-kicker{display:flex;align-items:center;justify-content:center;gap:6px;background:var(--green-pale);border:1.5px solid rgba(26,138,88,.2);color:var(--green);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:6px 16px;border-radius:99px;width:fit-content;margin:0 auto 14px;}
+
+/* PP: Casual Concept — 언어유희로 훅 */
+.intro-h1{font-weight:900;font-size:34px;line-height:1.2;color:var(--navy);text-align:center;margin-bottom:10px;letter-spacing:-.5px;}
+.intro-h1 .acc{color:var(--green);}
+
+/* Toss 자기관련성: "방귀쟁이라면 주목" */
+.intro-sub{text-align:center;font-size:14px;color:var(--ink-muted);line-height:1.75;margin-bottom:28px;font-weight:500;}
+.intro-sub em{color:var(--navy);font-style:normal;font-weight:700;}
+
+.ticker-wrap{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:13px 18px;margin-bottom:22px;overflow:hidden;box-shadow:0 2px 10px rgba(26,53,97,.06);}
+.ticker-lbl{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--navy-light);text-transform:uppercase;margin-bottom:8px;}
+.ticker-track{display:flex;gap:40px;animation:ticker 22s linear infinite;white-space:nowrap;}
+.ticker-item{font-size:12px;color:var(--ink-muted);flex-shrink:0;font-weight:500;}
+.ticker-item strong{color:var(--navy);font-weight:700;}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+.stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:28px;}
+.stat-card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:16px 10px;text-align:center;box-shadow:0 2px 8px rgba(26,53,97,.05);}
+.stat-num{display:block;font-weight:900;font-size:20px;color:var(--navy);line-height:1;margin-bottom:4px;letter-spacing:-.5px;}
+.stat-unit{font-size:10px;color:var(--ink-muted);font-weight:600;}
+
+/* Toss 조합 공식: [자기관련성 메인] + [게임 보조] + [즉시 CTA] */
+.btn-main{width:100%;padding:0;background:var(--navy);color:#fff;border:none;border-radius:14px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;overflow:hidden;transition:transform .15s,box-shadow .15s;box-shadow:0 6px 24px rgba(26,53,97,.22);}
+.btn-main:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(26,53,97,.3);}
+.btn-main-body{padding:18px 20px;display:flex;align-items:center;justify-content:space-between;}
+.btn-main-txt{text-align:left;}
+/* Toss 자기관련성: 메인 문구 */
+.btn-main-headline{display:block;font-size:16px;font-weight:700;letter-spacing:-.3px;}
+/* Toss 게임참여형: 보조 문구 */
+.btn-main-sub{display:block;font-size:11px;font-weight:400;opacity:.65;margin-top:3px;}
+.btn-main-arrow{font-size:22px;opacity:.7;}
+/* Toss 긴급성: 하단 바 */
+.btn-main-urgency{background:rgba(255,255,255,.1);padding:8px 20px;font-size:11px;font-weight:700;letter-spacing:.5px;border-top:1px solid rgba(255,255,255,.1);}
+
+.disclaimer{text-align:center;font-size:11px;color:var(--ink-dim);margin-top:12px;line-height:1.6;}
+
+/* ══ QUIZ ══
+   PP: Easy to Answer — 서브텍스트 한 줄, 논문 뒤로
+   PP: One Thing per Page — 질문 하나만 */
+#s-quiz{padding:36px 0 72px;}
+.q-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.q-step-txt{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--ink-muted);text-transform:uppercase;}
+.q-step-num{font-size:13px;font-weight:700;color:var(--navy);}
+.prog-bar{height:5px;background:var(--border);border-radius:99px;margin-bottom:32px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--green-mid),var(--navy-light));border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1);}
+
+.q-mood{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--green);margin-bottom:10px;text-transform:uppercase;}
+.q-text{font-weight:800;font-size:22px;line-height:1.38;color:var(--navy);margin-bottom:8px;letter-spacing:-.4px;}
+/* PP: Easy to Answer — 핵심 한 줄만 */
+.q-sub{font-size:12px;color:var(--ink-muted);line-height:1.7;margin-bottom:20px;padding-bottom:16px;border-bottom:1.5px solid var(--border);font-weight:500;}
+
+.opts{display:flex;flex-direction:column;gap:9px;}
+.opt-btn{padding:13px 16px;background:var(--surface);border:1.5px solid var(--border);border-radius:14px;color:var(--ink-mid);font-size:14px;font-family:'Noto Sans KR',sans-serif;font-weight:500;cursor:pointer;text-align:left;line-height:1.45;transition:all .18s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;gap:12px;box-shadow:0 1px 4px rgba(26,53,97,.04);position:relative;}
+.opt-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;transition:transform .18s;}
+.opt-label{flex:1;font-size:14px;font-weight:600;color:var(--ink);}
+.opt-check{width:20px;height:20px;border-radius:99px;background:var(--green);display:none;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:#fff;font-weight:700;}
+.opt-btn:hover{border-color:var(--navy-light);background:var(--surface2);transform:translateX(5px);box-shadow:0 4px 14px rgba(26,53,97,.1);}
+.opt-btn:hover .opt-icon{transform:scale(1.12) rotate(-4deg);}
+.opt-btn.picked{border-color:var(--navy);background:var(--surface2);transform:translateX(5px);}
+.opt-btn.picked .opt-label{color:var(--navy);font-weight:700;}
+.opt-btn.picked .opt-check{display:flex;}
+
+/* ══ LOADING — PP: No More Loading = 3초 ══ */
+#s-loading{position:fixed;inset:0;background:var(--bg);z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px;}
+#s-loading.active{display:flex;}
+.load-char{width:88px;height:88px;margin:0 auto 24px;animation:loadBounce 1s ease-in-out infinite;}
+@keyframes loadBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+/* PP: Casual Concept — 언어유희 로딩 카피 */
+.load-hl{font-weight:900;font-size:24px;color:var(--navy);line-height:1.35;margin-bottom:8px;min-height:66px;letter-spacing:-.5px;transition:opacity .25s;}
+.load-sub{font-size:13px;color:var(--ink-muted);font-weight:600;margin-bottom:24px;transition:opacity .25s;}
+.fact-card{background:var(--surface);border:1.5px solid var(--border);border-left:3px solid var(--green);border-radius:14px;padding:16px 20px;width:100%;max-width:360px;min-height:80px;display:flex;align-items:center;box-shadow:0 4px 16px rgba(26,53,97,.07);}
+.fact-inner{font-size:13px;color:var(--ink-mid);line-height:1.8;transition:opacity .25s,transform .25s;width:100%;font-weight:500;}
+.fact-inner strong{color:var(--navy);font-weight:700;}
+.fact-ref{display:block;font-size:10px;color:var(--ink-muted);margin-top:5px;font-weight:400;}
+
+/* ══ RESULT
+   PP: One Thing per Page — 3단 구조로 단순화
+   1) 유형 공감 (히어로+태그)
+   2) 과학적 근거 (통계+설명)
+   3) 처방 (솔루션+CTA) ══ */
+#s-result{padding:0 0 80px;}
+#s-result.active{display:block;animation:fadeUp .6s ease both;}
+
+.r-hero{margin:0 -20px;padding:36px 20px 28px;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;background:linear-gradient(160deg,var(--navy) 0%,var(--navy-mid) 55%,var(--navy-light) 100%);}
+.rh-dots{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.1) 1px,transparent 1px);background-size:22px 22px;}
+.rh-glow{position:absolute;width:300px;height:300px;border-radius:50%;filter:blur(72px);opacity:.25;top:40%;left:50%;transform:translate(-50%,-50%);}
+.r-char-wrap{position:relative;z-index:2;margin-bottom:16px;}
+.r-char-wrap svg{filter:drop-shadow(0 8px 24px rgba(0,0,0,.22));animation:charPop .7s cubic-bezier(.34,1.56,.64,1) .2s both;}
+@keyframes charPop{from{transform:scale(0) rotate(-10deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+.rh-eyebrow{font-size:10px;letter-spacing:3px;color:rgba(255,255,255,.4);text-transform:uppercase;position:relative;z-index:2;margin-bottom:6px;font-weight:700;}
+.rh-name{font-weight:900;font-size:26px;color:#fff;text-align:center;position:relative;z-index:2;line-height:1.2;letter-spacing:-.5px;}
+.rh-name span{display:block;font-size:13px;color:rgba(255,255,255,.5);font-weight:400;margin-top:5px;letter-spacing:0;}
+
+/* PP: Casual Concept — 유형 설명을 일상어로 */
+.r-body{padding-top:24px;}
+.tag-row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:20px;}
+.tag{padding:5px 13px;border-radius:99px;font-size:11px;font-weight:700;border:1.5px solid var(--border);color:var(--ink-muted);}
+.tag.ac{border-color:var(--green);color:var(--green);background:var(--green-dim);}
+
+/* Toss 자기관련성: "한국인의 X%가 이 유형" */
+.pop-badge{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:16px;box-shadow:0 2px 10px rgba(26,53,97,.06);}
+.pop-pct{font-weight:900;font-size:36px;color:var(--navy);flex-shrink:0;letter-spacing:-1px;}
+.pop-txt{font-size:12px;color:var(--ink-muted);line-height:1.75;font-weight:500;}
+.pop-txt strong{color:var(--ink);font-weight:700;}
+
+/* PP: Casual Concept — 바차트 라벨도 일상어 */
+.bar-section{margin-bottom:22px;}
+.bar-row{margin-bottom:13px;}
+.bar-lbl{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.bar-name{font-size:12px;color:var(--ink-muted);font-weight:600;}
+.bar-val{font-size:13px;font-weight:700;color:var(--navy);}
+.bar-track{height:7px;background:var(--border);border-radius:99px;overflow:hidden;}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--green-mid),var(--navy-light));border-radius:99px;width:0;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+
+.sci-card{background:var(--surface);border:1.5px solid var(--border);border-left:3px solid var(--green);border-radius:14px;padding:16px 20px;margin-bottom:20px;box-shadow:0 2px 8px rgba(26,53,97,.05);}
+.sci-lbl{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--green);text-transform:uppercase;margin-bottom:8px;}
+/* PP: Casual Concept — 전문용어 일상어 대체 완료 */
+.sci-txt{font-size:13px;color:var(--ink-mid);line-height:1.85;font-weight:500;}
+.sci-txt strong{color:var(--ink);font-weight:700;}
+.sci-ref{font-size:10px;color:var(--ink-muted);margin-top:7px;}
+
+.chip-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px;}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:9px 14px;font-size:13px;color:var(--ink-mid);line-height:1.4;font-weight:500;display:flex;align-items:center;gap:7px;}
+.chip-dot{width:5px;height:5px;border-radius:50%;background:var(--green);flex-shrink:0;}
+
+/* 처방전 솔루션 박스 */
+.sol-box{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%);border-radius:16px;padding:24px 22px;margin-bottom:20px;position:relative;overflow:hidden;}
+.sol-box::before{content:'';position:absolute;top:-50px;right:-50px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.06);}
+.sol-eye{font-size:9px;font-weight:700;letter-spacing:2.5px;color:rgba(255,255,255,.55);text-transform:uppercase;margin-bottom:10px;}
+.sol-title{font-weight:800;font-size:17px;color:#fff;margin-bottom:10px;line-height:1.4;letter-spacing:-.3px;}
+.sol-desc{font-size:13px;color:rgba(255,255,255,.65);line-height:1.85;margin-bottom:14px;}
+.sol-desc strong{color:#fff;font-weight:700;}
+.ingr-row{display:flex;gap:8px;flex-wrap:wrap;}
+.ingr-pill{padding:5px 13px;border-radius:99px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);font-size:11px;color:rgba(255,255,255,.9);font-weight:600;}
+
+/* 공유 — 먼저, 강조 */
+.btn-share{width:100%;padding:16px 20px;background:var(--surface);color:var(--navy);border:2px solid var(--navy);border-radius:14px;font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .2s;margin-bottom:14px;box-shadow:0 2px 10px rgba(26,53,97,.1);}
+.btn-share:hover{background:var(--navy);color:#fff;box-shadow:0 6px 20px rgba(26,53,97,.2);}
+
+/* 브릿지 — PP: Context-based */
+.bridge-txt{text-align:center;font-size:13px;color:var(--ink-muted);font-weight:600;margin:4px 0 16px;display:flex;align-items:center;gap:8px;justify-content:center;}
+.bridge-txt::before,.bridge-txt::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ══ 처방전 ══
+   PP: No Ads Patterns — 광고 아닌 의료 서류 프레임
+   PP: Value First — 솔루션 설명 후 등장 */
+.rx-box{
+  background:var(--surface);border:2px solid var(--navy);border-radius:18px;
+  padding:24px 22px 20px;margin-bottom:14px;position:relative;overflow:hidden;
+  box-shadow:0 6px 28px rgba(26,53,97,.11);
+  background-image:repeating-linear-gradient(0deg,transparent,transparent 27px,rgba(26,53,97,.035) 27px,rgba(26,53,97,.035) 28px);
+}
+.rx-box::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg,var(--navy),var(--navy-mid));border-radius:18px 0 0 18px;}
+.rx-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;padding-left:4px;}
+.rx-logo{font-weight:900;font-size:17px;letter-spacing:2.5px;color:var(--navy);}
+.rx-sub-label{font-size:9px;font-weight:600;letter-spacing:1.5px;color:var(--ink-muted);text-transform:uppercase;margin-top:2px;}
+.rx-symbol{font-size:40px;font-weight:900;color:var(--navy);line-height:1;opacity:.1;font-family:serif;margin-right:4px;}
+.rx-divider{height:1px;background:var(--border);margin:12px 0;}
+.rx-patient-row{display:flex;align-items:center;gap:10px;margin-bottom:7px;padding-left:4px;}
+.rx-label{font-size:10px;font-weight:700;letter-spacing:1px;color:var(--ink-muted);text-transform:uppercase;width:60px;flex-shrink:0;}
+.rx-patient-name{font-size:15px;font-weight:800;color:var(--navy);letter-spacing:-.3px;}
+.rx-date{font-size:13px;font-weight:500;color:var(--ink-mid);}
+.rx-drug-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;padding-left:4px;}
+.rx-num{width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.rx-drug-name{font-size:15px;font-weight:800;color:var(--navy);letter-spacing:-.3px;margin-bottom:2px;}
+.rx-drug-detail{font-size:12px;color:var(--ink-muted);font-weight:500;}
+.rx-dosage-box{background:var(--surface2);border:1.5px solid var(--border);border-radius:12px;padding:13px 14px;display:flex;margin-bottom:12px;}
+.rx-dosage-item{flex:1;text-align:center;position:relative;}
+.rx-dosage-item:not(:last-child)::after{content:'';position:absolute;right:0;top:10%;bottom:10%;width:1px;background:var(--border);}
+.rx-d-label{display:block;font-size:9px;font-weight:700;letter-spacing:1px;color:var(--ink-muted);text-transform:uppercase;margin-bottom:4px;}
+.rx-d-val{display:block;font-size:14px;font-weight:800;color:var(--navy);letter-spacing:-.3px;}
+.rx-note{font-size:12px;color:var(--ink-mid);line-height:1.7;padding:10px 14px;padding-left:16px;border-left:2px solid var(--green);margin-bottom:0;font-weight:500;background:var(--green-pale);border-radius:0 8px 8px 0;}
+.rx-footer{display:flex;align-items:center;justify-content:space-between;padding-left:4px;margin-top:12px;}
+.rx-stamp{font-weight:900;font-size:12px;letter-spacing:3px;color:var(--navy);opacity:.25;border:2px solid var(--navy);padding:3px 9px;border-radius:5px;transform:rotate(-3deg);}
+.rx-footer-txt{font-size:10px;color:var(--ink-dim);font-weight:500;text-align:right;}
+
+/* Toss [대괄호] + 자기관련성 + 즉시 CTA */
+.btn-rx{width:100%;padding:16px;margin-top:16px;background:var(--navy);color:#fff;border:none;border-radius:12px;font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:-.2px;transition:transform .15s,box-shadow .15s;box-shadow:0 6px 20px rgba(26,53,97,.22);}
+.btn-rx:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(26,53,97,.3);}
+.btn-retry{width:100%;padding:14px;background:transparent;color:var(--ink-dim);border:none;font-size:13px;font-family:'Noto Sans KR',sans-serif;font-weight:500;cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+
+/* ══ 공유 버튼 — 히어로 직후 버전 (감정 피크) ══ */
+.btn-share-top{
+  width:100%;padding:15px 20px;
+  background:var(--surface);color:var(--navy);
+  border:2px solid var(--navy);border-radius:14px;
+  font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:all .2s;margin-bottom:20px;
+  box-shadow:0 2px 10px rgba(26,53,97,.1);letter-spacing:-.2px;
+}
+.btn-share-top:hover{background:var(--navy);color:#fff;}
+
+/* ══ 아코디언 — PP: Minimum Features 실현 ══ */
+.acc-block{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:14px;margin-bottom:12px;overflow:hidden;
+  box-shadow:0 1px 6px rgba(26,53,97,.05);
+}
+.acc-trigger{
+  width:100%;padding:15px 18px;
+  background:transparent;border:none;
+  display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;font-family:'Noto Sans KR',sans-serif;
+  font-size:13px;font-weight:700;color:var(--navy);
+  text-align:left;gap:10px;
+}
+.acc-trigger-left{display:flex;align-items:center;gap:8px;}
+.acc-trigger-icon{font-size:16px;}
+.acc-arrow{
+  font-size:11px;color:var(--ink-muted);flex-shrink:0;
+  transition:transform .25s ease;font-style:normal;
+}
+.acc-block.open .acc-arrow{transform:rotate(180deg);}
+.acc-body{
+  max-height:0;overflow:hidden;
+  transition:max-height .35s cubic-bezier(.4,0,.2,1);
+}
+.acc-block.open .acc-body{max-height:1200px;}
+.acc-inner{padding:0 18px 18px;}
+/* ══ 음식 처방 카드 ══ */
+.food-card{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:16px;overflow:hidden;margin-bottom:22px;
+  box-shadow:0 2px 10px rgba(26,53,97,.06);
+}
+.food-card-header{
+  padding:14px 20px 10px;
+  border-bottom:1.5px solid var(--border);
+  display:flex;align-items:center;gap:8px;
+}
+.food-card-title{font-size:12px;font-weight:700;letter-spacing:1px;color:var(--navy);text-transform:uppercase;}
+.food-cols{display:grid;grid-template-columns:1fr 1fr;}
+.food-col{padding:16px 16px 18px;}
+.food-col:first-child{border-right:1.5px solid var(--border);}
+.food-col-label{
+  display:flex;align-items:center;gap:6px;
+  font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  margin-bottom:12px;
+}
+.food-col-label.good{color:var(--green);}
+.food-col-label.bad{color:var(--coral);}
+.food-col-label .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.food-col-label .dot.g{background:var(--green);}
+.food-col-label .dot.r{background:var(--coral);}
+.food-item{
+  display:flex;align-items:center;gap:9px;
+  padding:7px 0;
+  border-bottom:1px solid var(--border);
+  font-size:13px;color:var(--ink-mid);font-weight:500;
+  line-height:1.35;
+}
+.food-item:last-child{border-bottom:none;padding-bottom:0;}
+.food-emoji{
+  width:32px;height:32px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;flex-shrink:0;
+}
+.food-emoji.g{background:#E3F5EE;}
+.food-emoji.r{background:#FEF0EF;}
+.food-item-info{}
+.food-item-name{display:block;font-size:13px;font-weight:600;color:var(--ink);}
+.food-item-why{display:block;font-size:11px;color:var(--ink-muted);margin-top:1px;font-weight:400;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<!-- ══ INTRO ══ -->
+<div id="s-intro" class="screen active"><div class="wrap">
+  <div class="brand-row">
+    <div class="brand-logo">HYGUT</div>
+    <div class="brand-badge">GUT HEALTH</div>
+  </div>
+
+  <!-- 캐릭터 4인방 -->
+  <div class="char-banner">
+    <svg width="66" height="78" viewBox="0 0 66 78" fill="none"><path d="M6 33 Q6 62 15 70 Q21 74 27 68 Q33 62 39 68 Q45 74 51 70 Q60 62 60 33 Q60 6 33 6 Q6 6 6 33Z" fill="#E8DEFF"/><circle cx="33" cy="31" r="21" fill="#F0EBFF"/><ellipse cx="22" cy="39" rx="5" ry="3" fill="#C8A8FF" opacity=".4"/><ellipse cx="44" cy="39" rx="5" ry="3" fill="#C8A8FF" opacity=".4"/><circle cx="27" cy="29" r="4.5" fill="#2D1B6B"/><circle cx="39" cy="29" r="4.5" fill="#2D1B6B"/><circle cx="29" cy="27" r="1.8" fill="white"/><circle cx="41" cy="27" r="1.8" fill="white"/><path d="M27 38 Q33 43 39 38" stroke="#7B52D4" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M6 33 Q6 62 15 70 Q21 74 27 68 Q33 62 39 68 Q45 74 51 70 Q60 62 60 33 Q60 6 33 6 Q6 6 6 33Z" fill="none" stroke="#6B4FC8" stroke-width="2.5"/><circle cx="56" cy="16" r="5" fill="#C8F0E0" stroke="#4AB88A" stroke-width="1.5"/><circle cx="54" cy="9" r="3" fill="#C8F0E0" stroke="#4AB88A" stroke-width="1.5"/></svg>
+
+    <svg width="72" height="84" viewBox="0 0 72 84" fill="none"><path d="M11 44 Q4 34 9 22" stroke="#FFB347" stroke-width="7" stroke-linecap="round" fill="none"/><path d="M61 44 Q68 34 63 22" stroke="#FFB347" stroke-width="7" stroke-linecap="round" fill="none"/><circle cx="36" cy="46" r="30" fill="#FFE4B0"/><circle cx="36" cy="44" r="28" fill="#FFD580"/><ellipse cx="23" cy="52" rx="7" ry="4.5" fill="#FFA940" opacity=".5"/><ellipse cx="49" cy="52" rx="7" ry="4.5" fill="#FFA940" opacity=".5"/><circle cx="26" cy="38" r="5.5" fill="#1A1A2E"/><circle cx="46" cy="38" r="5.5" fill="#1A1A2E"/><circle cx="28" cy="36" r="2" fill="white"/><circle cx="48" cy="36" r="2" fill="white"/><ellipse cx="36" cy="53" rx="7" ry="6" fill="#C05820"/><ellipse cx="36" cy="55" rx="6" ry="4" fill="#FF8C69"/><circle cx="36" cy="44" r="28" fill="none" stroke="#E07B00" stroke-width="2.5"/><text x="54" y="20" font-size="14" fill="#FFB347">♪</text></svg>
+
+    <svg width="68" height="80" viewBox="0 0 68 80" fill="none"><path d="M25 14 Q20 6 25 0" stroke="#FF9B94" stroke-width="2.5" stroke-linecap="round" fill="none"/><path d="M34 12 Q29 4 34 -2" stroke="#FF9B94" stroke-width="2.5" stroke-linecap="round" fill="none"/><path d="M43 14 Q48 6 43 0" stroke="#FF9B94" stroke-width="2.5" stroke-linecap="round" fill="none"/><circle cx="34" cy="48" r="28" fill="#FFA89E"/><circle cx="34" cy="46" r="26" fill="#FFBAB3"/><ellipse cx="22" cy="53" rx="7" ry="4.5" fill="#FF7B70" opacity=".5"/><ellipse cx="46" cy="53" rx="7" ry="4.5" fill="#FF7B70" opacity=".5"/><path d="M22 34 L30 38" stroke="#C0392B" stroke-width="3" stroke-linecap="round"/><path d="M46 34 L38 38" stroke="#C0392B" stroke-width="3" stroke-linecap="round"/><circle cx="27" cy="43" r="5" fill="#2C1010"/><circle cx="41" cy="43" r="5" fill="#2C1010"/><circle cx="29" cy="41" r="2" fill="white"/><circle cx="43" cy="41" r="2" fill="white"/><path d="M25 55 L28 53 L34 56 L40 53 L43 55" stroke="#C0392B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="34" cy="46" r="26" fill="none" stroke="#C0392B" stroke-width="2.5"/></svg>
+
+    <svg width="64" height="76" viewBox="0 0 64 76" fill="none"><ellipse cx="32" cy="10" rx="6" ry="11" fill="#5AC97A" transform="rotate(-15 32 10)"/><ellipse cx="32" cy="10" rx="6" ry="11" fill="#3DB55E" transform="rotate(10 32 10)"/><circle cx="32" cy="46" r="26" fill="#C8F5DC"/><circle cx="32" cy="44" r="24" fill="#D8FADF"/><ellipse cx="21" cy="51" rx="6" ry="4" fill="#7DE0A0" opacity=".55"/><ellipse cx="43" cy="51" rx="6" ry="4" fill="#7DE0A0" opacity=".55"/><path d="M24 40 Q28 35 32 40" stroke="#1A5C2C" stroke-width="2.5" stroke-linecap="round" fill="none"/><path d="M32 40 Q36 35 40 40" stroke="#1A5C2C" stroke-width="2.5" stroke-linecap="round" fill="none"/><path d="M23 50 Q32 58 41 50" stroke="#1A5C2C" stroke-width="2.2" stroke-linecap="round" fill="none"/><circle cx="32" cy="44" r="24" fill="none" stroke="#2CA050" stroke-width="2.5"/><circle cx="52" cy="22" r="3.5" fill="#D0F5E0" stroke="#4ABD72" stroke-width="1.5"/></svg>
+  </div>
+
+  <div class="intro-kicker">✦ 장 건강 심리 테스트</div>
+
+  <!-- PP: Casual Concept + 언어유희 -->
+  <h1 class="intro-h1">방구는<br><span class="acc">거짓말하지 않는다</span></h1>
+
+  <!-- Toss 자기관련성: "~이신 분이라면" -->
+  <p class="intro-sub">방귀가 잦거나 냄새가 심한 분이라면 주목 👀<br><em>10문항으로 찾는 나의 장 건강 유형</em></p>
+
+  <div class="ticker-wrap">
+    <div class="ticker-lbl">📡 SCIENCE FACTS</div>
+    <div class="ticker-track">
+      <span class="ticker-item">하루 평균 방귀 <strong>14~23회</strong> (Levitt, 1998)</span>
+      <span class="ticker-item">장 속 주민 <strong>38조 마리</strong></span>
+      <span class="ticker-item">방귀의 <strong>99%</strong>는 무취 가스</span>
+      <span class="ticker-item">균밥 4주 → 유익균 <strong>2.8배↑</strong></span>
+      <span class="ticker-item">성인의 <strong>68%</strong> 장 불편감 경험</span>
+      <span class="ticker-item">하루 평균 방귀 <strong>14~23회</strong> (Levitt, 1998)</span>
+      <span class="ticker-item">장 속 주민 <strong>38조 마리</strong></span>
+      <span class="ticker-item">방귀의 <strong>99%</strong>는 무취 가스</span>
+      <span class="ticker-item">균밥 4주 → 유익균 <strong>2.8배↑</strong></span>
+      <span class="ticker-item">성인의 <strong>68%</strong> 장 불편감 경험</span>
+    </div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-card"><span class="stat-num">10</span><span class="stat-unit">문항</span></div>
+    <div class="stat-card"><span class="stat-num">4가지</span><span class="stat-unit">방구 유형</span></div>
+    <div class="stat-card"><span class="stat-num">2분</span><span class="stat-unit">소요</span></div>
+  </div>
+
+  <!-- Toss 조합: 자기관련성 메인 + 게임 보조 + 긴급성 하단바 -->
+  <button class="btn-main" onclick="startQuiz()">
+    <div class="btn-main-body">
+      <div class="btn-main-txt">
+        <!-- Toss 자기관련성 + PP Casual -->
+        <span class="btn-main-headline">내 방구 유형 도전하기</span>
+        <!-- Toss 게임참여형 -->
+        <span class="btn-main-sub">결과에서 맞춤 처방전 발행 · 무료</span>
+      </div>
+      <span class="btn-main-arrow">→</span>
+    </div>
+    <!-- Toss 긴급성 -->
+    <div class="btn-main-urgency">🧫 지금까지 참여한 방구쟁이 수 : 이미 많음</div>
+  </button>
+  <p class="disclaimer">* 의학적 진단이 아닌 재미 기반 장 건강 참고 콘텐츠입니다</p>
+</div></div>
+
+<!-- ══ QUIZ ══ -->
+<div id="s-quiz" class="screen"><div class="wrap">
+  <div class="q-topbar">
+    <span class="q-step-txt">QUESTION</span>
+    <span class="q-step-num" id="q-num">01 / 10</span>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="prog" style="width:10%"></div></div>
+  <div id="q-card"></div>
+</div></div>
+
+<!-- ══ LOADING — PP: No More Loading = 3초 ══ -->
+<div id="s-loading" class="screen">
+  <div class="load-char">
+    <svg width="88" height="88" viewBox="0 0 88 88" fill="none"><ellipse cx="44" cy="78" rx="20" ry="5" fill="rgba(26,53,97,.08)"/><circle cx="44" cy="44" r="32" fill="#FFE4B0"/><circle cx="44" cy="42" r="30" fill="#FFD580"/><ellipse cx="31" cy="49" rx="6" ry="4" fill="#FFA940" opacity=".5"/><ellipse cx="57" cy="49" rx="6" ry="4" fill="#FFA940" opacity=".5"/><circle cx="36" cy="38" r="5" fill="#1A1A2E"/><circle cx="52" cy="38" r="5" fill="#1A1A2E"/><circle cx="38" cy="36" r="2" fill="white"/><circle cx="54" cy="36" r="2" fill="white"/><ellipse cx="44" cy="52" rx="7" ry="6" fill="#C05820"/><ellipse cx="44" cy="54" rx="6" ry="4" fill="#FF8C69"/><circle cx="44" cy="42" r="30" fill="none" stroke="#E07B00" stroke-width="3"/><text x="64" y="24" font-size="16" fill="#FFB347">♪</text></svg>
+  </div>
+  <!-- PP: Casual + 언어유희 로딩 카피 -->
+  <div class="load-hl" id="l-hl">장고(長考)하는<br>중이야…</div>
+  <div class="load-sub" id="l-sub">장 속에서 답을 찾는 중</div>
+  <div class="fact-card"><div class="fact-inner" id="l-fact"></div></div>
+</div>
+
+<!-- ══ RESULT ══ -->
+<div id="s-result" class="screen">
+  <div class="r-hero">
+    <div class="rh-dots"></div>
+    <div class="rh-glow" id="rh-glow"></div>
+    <div class="r-char-wrap" id="r-char"></div>
+    <div class="rh-eyebrow">나의 방구 유형</div>
+    <div class="rh-name" id="r-name"></div>
+  </div>
+  <div class="wrap r-body">
+    <div class="tag-row" id="r-tags"></div>
+
+    <!-- 공유 ① — 감정 피크 직후 (Nielsen Norman: 최고 공유 시점) -->
+    <button class="btn-share-top" onclick="shareResult()">
+      💨 방구쟁이한테 공유하기
+    </button>
+
+    <!-- 아코디언 ① 통계·지표 -->
+    <div class="acc-block" id="acc-stats">
+      <button class="acc-trigger" onclick="toggleAcc('acc-stats')">
+        <span class="acc-trigger-left">
+          <span class="acc-trigger-icon">📊</span>
+          내 장 건강 수치 보기
+        </span>
+        <i class="acc-arrow">▼</i>
+      </button>
+      <div class="acc-body">
+        <div class="acc-inner">
+          <div class="pop-badge" style="margin-bottom:16px">
+            <div class="pop-pct" id="r-pct"></div>
+            <div class="pop-txt" id="r-pop"></div>
+          </div>
+          <div class="bar-section" id="r-bars"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 아코디언 ② 과학 근거 -->
+    <div class="acc-block" id="acc-sci">
+      <button class="acc-trigger" onclick="toggleAcc('acc-sci')">
+        <span class="acc-trigger-left">
+          <span class="acc-trigger-icon">🔬</span>
+          왜 이런 방구가 나오는 거야?
+        </span>
+        <i class="acc-arrow">▼</i>
+      </button>
+      <div class="acc-body">
+        <div class="acc-inner">
+          <div class="chip-grid" id="r-chips" style="margin-bottom:14px"></div>
+          <div style="font-size:13px;color:var(--ink-mid);line-height:1.85;font-weight:500;" id="r-sci"></div>
+          <div style="font-size:10px;color:var(--ink-muted);margin-top:8px;" id="r-sci-ref"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 아코디언 ③ 음식 처방 -->
+    <div class="acc-block" id="acc-food">
+      <button class="acc-trigger" onclick="toggleAcc('acc-food')">
+        <span class="acc-trigger-left">
+          <span class="acc-trigger-icon">🍽️</span>
+          균밥 vs 균독 — 내 음식 처방
+        </span>
+        <i class="acc-arrow">▼</i>
+      </button>
+      <div class="acc-body">
+        <div class="acc-inner" style="padding-top:4px">
+          <div class="food-cols" style="margin:0 -4px">
+            <div class="food-col">
+              <div class="food-col-label good"><span class="dot g"></span>균밥</div>
+              <div id="r-food-good"></div>
+            </div>
+            <div class="food-col">
+              <div class="food-col-label bad"><span class="dot r"></span>균독</div>
+              <div id="r-food-bad"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 솔루션 박스 — 항상 보임 (처방 전 가치 설명) -->
+    <div class="sol-box">
+      <div class="sol-eye">균밥 처방 내역</div>
+      <div class="sol-title" id="r-sol-t"></div>
+      <div class="sol-desc" id="r-sol-d"></div>
+      <div class="ingr-row" id="r-ingr"></div>
+    </div>
+
+    <div class="bridge-txt">장담컨대, 이 처방이 필요합니다</div>
+
+    <!-- 처방전 -->
+    <div class="rx-box">
+      <div class="rx-header">
+        <div>
+          <div class="rx-logo">HYGUT</div>
+          <div class="rx-sub-label">GUT HEALTH LAB</div>
+        </div>
+        <div class="rx-symbol">℞</div>
+      </div>
+      <div class="rx-divider"></div>
+      <div class="rx-patient-row">
+        <span class="rx-label">장 유형</span>
+        <span class="rx-patient-name" id="rx-type-name">—</span>
+      </div>
+      <div class="rx-patient-row">
+        <span class="rx-label">발행일</span>
+        <span class="rx-date" id="rx-date">—</span>
+      </div>
+      <div class="rx-divider"></div>
+      <div class="rx-drug-row">
+        <div class="rx-num">①</div>
+        <div>
+          <div class="rx-drug-name">HYGUT PURE 프리바이오틱스</div>
+          <div class="rx-drug-detail">XOS + GOS + FOS 3중 복합</div>
+        </div>
+      </div>
+      <div class="rx-dosage-box">
+        <div class="rx-dosage-item">
+          <span class="rx-d-label">복용량</span>
+          <span class="rx-d-val">1포</span>
+        </div>
+        <div class="rx-dosage-item">
+          <span class="rx-d-label">횟수</span>
+          <span class="rx-d-val">매일 1회</span>
+        </div>
+        <div class="rx-dosage-item">
+          <span class="rx-d-label">기간</span>
+          <span class="rx-d-val">4주~</span>
+        </div>
+      </div>
+      <div class="rx-note" id="rx-note">—</div>
+      <div class="rx-divider"></div>
+      <div class="rx-footer">
+        <div class="rx-stamp">HYGUT</div>
+        <div class="rx-footer-txt">장 건강 연구소 · GUT HEALTH LAB</div>
+      </div>
+      <button class="btn-rx" onclick="goCTA()">[처방약] 지금 수령하러 가기 →</button>
+    </div>
+
+    <!-- 공유 ② — 최하단 (전체 읽은 사람 대상) -->
+    <button class="btn-share" onclick="shareResult()">💨 방구쟁이한테 공유하기</button>
+    <button class="btn-retry" onclick="restart()">다시 테스트하기</button>
+  </div>
+</div>
+
+<script>
+/* ──────────────────────
+   PP: Easy to Answer
+   — sub: 핵심 한 줄 (논문은 뒤로, 3초 이해)
+   PP: Casual Concept
+   — 전문용어 → 일상어 완전 대체
+   언어유희 (칩안 내력 스타일):
+   — "장고(長考)하는 중" (장 + 장고)
+   — "장담컨대" (장 + 장담)
+   — "균밥" (유익균의 먹이 → 균+밥)
+   — "장 속 주민" (장내 세균 → 주민)
+   — "가스라이팅" (가스 + 가스라이팅)
+   — "무음 모드인데 알림 ON" (유령형 서브)
+   — "즉흥 연주 중" (재즈형)
+   — "내면이 뜨겁다" (화산형)
+   — "장 엘리트" (민들레형)
+────────────────────── */
+const Qs=[
+  {mood:"기본 탐색",
+   text:"방귀가 주로 언제 나와?",
+   /* PP: Easy to Answer — 핵심 한 줄 */
+   sub:"가장 자주 터지는 타이밍을 골라봐",
+   opts:[
+     {bg:"#FFF4E6",e:"🍽️",t:"밥 먹고 나면 꼭 나와",s:[0,2,1,0]},
+     {bg:"#FFF0F0",e:"😤",t:"긴장하거나 스트레스받을 때",s:[0,0,3,1]},
+     {bg:"#F0EEFF",e:"🌙",t:"잠들기 전 누우면 나와",s:[1,2,0,1]},
+     {bg:"#E8F8F0",e:"🎲",t:"예고 없이 아무 때나",s:[2,1,0,1]}]},
+  {mood:"소리 감별",
+   text:"방귀 소리 스타일은?",
+   /* 언어유희: 소리로 스타일 정의 */
+   sub:"가장 가까운 걸 골라봐 — 오디션이야",
+   opts:[
+     {bg:"#FFF0ED",e:"💥",t:"존재감 폭발, 다들 들음",s:[0,0,2,2]},
+     {bg:"#F3F0FF",e:"🤫",t:"소리 없는데 냄새 살인적",s:[2,1,0,0]},
+     {bg:"#FFF8E6",e:"🎵",t:"리듬감 있게 여러 번",s:[0,2,1,0]},
+     {bg:"#E8F5EE",e:"😌",t:"조용하고 냄새도 별로",s:[0,0,0,3]}]},
+  {mood:"리듬 체크",
+   text:"화장실 가는 패턴이 어때?",
+   /* PP: Casual — "배변 패턴" → "화장실 가는 패턴" */
+   sub:"장 속 주민들이 얼마나 바쁜지 알 수 있어",
+   opts:[
+     {bg:"#F0F8FF",e:"🐢",t:"2~3일에 한 번, 만성 변비",s:[2,1,0,0]},
+     {bg:"#E8F6FF",e:"🌊",t:"갑자기 급하고 묽음",s:[0,0,3,0]},
+     {bg:"#FFF4E6",e:"🔄",t:"변비랑 설사 왔다갔다",s:[1,2,1,0]},
+     {bg:"#EEFFED",e:"📅",t:"매일 규칙적으로",s:[0,0,0,3]}]},
+  {mood:"심리 반응",
+   /* 언어유희: "가스라이팅" */
+   text:"스트레스받으면 장이 가스라이팅해?",
+   sub:"내 감정이 배로 먼저 내려오는 타입인지 체크",
+   opts:[
+     {bg:"#FFF0ED",e:"⚡",t:"배 아프고 화장실 바로 달려감",s:[0,0,3,0]},
+     {bg:"#F2F0FF",e:"🪨",t:"배가 딱딱해지고 가스가 참",s:[2,0,1,0]},
+     {bg:"#F5F5F5",e:"🤷",t:"잘 모르겠음",s:[1,1,0,1]},
+     {bg:"#EDFFF5",e:"😌",t:"별로 영향 없음",s:[0,0,0,3]}]},
+  {mood:"냄새 판정",
+   text:"방구 냄새 레벨은?",
+   sub:"솔직하게 — 이게 유형 결정에 핵심이야",
+   opts:[
+     {bg:"#FFF0EE",e:"☠️",t:"세계적 수준, 나도 도망침",s:[3,0,0,0]},
+     {bg:"#FFF6E6",e:"🏭",t:"은은하지만 꽤 독함",s:[2,1,0,0]},
+     {bg:"#EEF8FF",e:"🌬️",t:"거의 무향",s:[0,0,0,2]},
+     {bg:"#F4EEFF",e:"🤔",t:"날에 따라 천차만별",s:[1,2,0,0]}]},
+  {mood:"식욕 탐색",
+   /* 언어유희: "단짠단짠" */
+   text:"단거·밀가루가 얼마나 당겨?",
+   sub:"당기는 게 잦을수록 장 속 나쁜 균이 보내는 신호일 수 있어",
+   opts:[
+     {bg:"#FFF3E8",e:"🍰",t:"매일 당기고 안 먹으면 힘듦",s:[3,0,1,0]},
+     {bg:"#FFF8EE",e:"🍞",t:"자주, 식후에 특히",s:[2,0,0,0]},
+     {bg:"#F0FFF4",e:"🙂",t:"가끔, 참을 수 있음",s:[0,0,0,1]},
+     {bg:"#EEFFF4",e:"✅",t:"별로 안 당김",s:[0,0,0,2]}]},
+  {mood:"아침 체크",
+   text:"아침에 눈 뜨면 배 상태는?",
+   /* PP: Casual — "migrating motor complex" 대신 일상어 */
+   sub:"자는 동안 장이 얼마나 열심히 청소했는지 알 수 있어",
+   opts:[
+     {bg:"#FFF0EC",e:"💣",t:"가스가 꽉 차서 불편함",s:[2,2,0,0]},
+     {bg:"#F5F5F5",e:"😐",t:"약간 더부룩하지만 참을 만함",s:[1,1,0,0]},
+     {bg:"#EDFFF5",e:"🙂",t:"개운하고 괜찮음",s:[0,0,0,3]},
+     {bg:"#EEF3FF",e:"😴",t:"배보다 몸이 더 찌뿌둥함",s:[1,0,1,1]}]},
+  {mood:"균밥 검사",
+   /* 언어유희: "균밥" */
+   text:"유익균한테 밥 잘 챙겨줬어?",
+   sub:"김치·요거트·낫토 = 장 속 주민들의 밥",
+   opts:[
+     {bg:"#EDFFF3",e:"🥗",t:"매일 빠질 수 없음",s:[0,0,0,3]},
+     {bg:"#FFF6EE",e:"🍽️",t:"가끔은 먹음",s:[1,0,0,1]},
+     {bg:"#F5F5F5",e:"😅",t:"거의 안 먹음",s:[2,0,1,0]},
+     {bg:"#FFF0EE",e:"❌",t:"피함, 소화 힘들어서",s:[3,0,0,0]}]},
+  {mood:"사건 기록",
+   text:"최근 1년, 항생제 먹은 적?",
+   /* PP: Casual — 항생제 효과 친근하게 */
+   sub:"항생제는 나쁜 균도 잡지만 좋은 균도 같이 잡아",
+   opts:[
+     {bg:"#FFF0F0",e:"💊",t:"2회 이상",s:[3,0,0,0]},
+     {bg:"#FFF4EE",e:"💊",t:"한 번",s:[2,0,0,0]},
+     {bg:"#EDFFF5",e:"✅",t:"없음",s:[0,0,0,1]},
+     {bg:"#F5F0FF",e:"🤔",t:"잘 모르겠음",s:[1,0,0,0]}]},
+  {mood:"최후 진술",
+   text:"내 방구를 한 단어로 표현하면?",
+   sub:"이 선택이 최종 유형을 결정해 — 신중하게",
+   opts:[
+     {bg:"#FFF0EC",e:"🌋",t:"폭발적",s:[0,0,2,2]},
+     {bg:"#F3EEFF",e:"👻",t:"조용하지만 무서운",s:[3,0,0,0]},
+     {bg:"#FFF8E6",e:"🎲",t:"예측 불가",s:[1,3,0,0]},
+     {bg:"#EDFFF5",e:"🌱",t:"은근 건강함",s:[0,0,0,3]}]}
+];
+
+const FACTS=[
+  {b:"방귀 성분: <strong>수소 21% + 질소 59%</strong><br>냄새 원인 가스는 전체의 1% 미만",r:"Suarez et al., 1997 · Gastroenterology"},
+  {b:"유익균이 많으면 냄새 주범(황화수소)을 <strong>장 속 주민들끼리 경쟁해서 억제</strong>",r:"Macfarlane et al., 2006 · J. Appl. Microbiol"},
+  {b:"균밥(프리바이오틱스) 4주 후 <strong>장 불편감 42% 감소</strong>",r:"Silk et al., 2009 · Alimentary Pharmacology"},
+  {b:"장 속 주민들은 <strong>기분 조절 물질(GABA·세로토닌)도 만들어</strong>",r:"Cryan & Dinan, 2012 · Nature Reviews Neuroscience"},
+  {b:"식이섬유 많이 먹으면 <strong>2주 만에 장 속 주민 구성이 바뀜</strong>",r:"Sonnenburg et al., 2021 · Cell"}
+];
+
+/* 언어유희 로딩 카피 — "장고(長考)" */
+const MSGS=[
+  ["장고(長考)하는\n중이야…","장 속에서 답을 찾는 중"],
+  ["장래(腸來)\n거의 확정됐어","유형 매핑 마지막 단계"],
+  ["장담(腸談)\n할 수 있어","결과 처방전 발행 중"]
+];
+
+const CHARS={
+  ghost:`<svg width="110" height="122" viewBox="0 0 110 122" fill="none"><path d="M8 52 Q8 98 22 108 Q32 114 42 106 Q55 98 68 106 Q78 114 88 108 Q102 98 102 52 Q102 10 55 10 Q8 10 8 52Z" fill="#E8DEFF"/><circle cx="55" cy="50" r="34" fill="#F0EBFF"/><ellipse cx="39" cy="60" rx="7" ry="4.5" fill="#C8A8FF" opacity=".4"/><ellipse cx="71" cy="60" rx="7" ry="4.5" fill="#C8A8FF" opacity=".4"/><circle cx="46" cy="46" r="6.5" fill="#2D1B6B"/><circle cx="64" cy="46" r="6.5" fill="#2D1B6B"/><circle cx="48" cy="44" r="2.5" fill="white"/><circle cx="66" cy="44" r="2.5" fill="white"/><path d="M44 62 Q55 69 66 62" stroke="#7B52D4" stroke-width="2.5" stroke-linecap="round" fill="none"/><path d="M8 52 Q8 98 22 108 Q32 114 42 106 Q55 98 68 106 Q78 114 88 108 Q102 98 102 52 Q102 10 55 10 Q8 10 8 52Z" fill="none" stroke="#6B4FC8" stroke-width="3"/><circle cx="90" cy="26" r="7" fill="#C8F0E0" stroke="#4AB88A" stroke-width="2"/><circle cx="87" cy="17" r="4.5" fill="#C8F0E0" stroke="#4AB88A" stroke-width="1.5"/><circle cx="97" cy="15" r="3" fill="#C8F0E0" stroke="#4AB88A" stroke-width="1.5"/></svg>`,
+  jazz:`<svg width="118" height="118" viewBox="0 0 118 118" fill="none"><path d="M16 59 Q7 47 13 33" stroke="#FFB347" stroke-width="8" stroke-linecap="round" fill="none"/><path d="M102 59 Q111 47 105 33" stroke="#FFB347" stroke-width="8" stroke-linecap="round" fill="none"/><circle cx="59" cy="62" r="42" fill="#FFE4B0"/><circle cx="59" cy="59" r="39" fill="#FFD580"/><ellipse cx="44" cy="67" rx="8" ry="5.5" fill="#FFA940" opacity=".5"/><ellipse cx="74" cy="67" rx="8" ry="5.5" fill="#FFA940" opacity=".5"/><circle cx="47" cy="52" r="7" fill="#1A1A2E"/><circle cx="71" cy="52" r="7" fill="#1A1A2E"/><circle cx="50" cy="49" r="2.5" fill="white"/><circle cx="74" cy="49" r="2.5" fill="white"/><ellipse cx="59" cy="71" rx="9" ry="8" fill="#C05820"/><ellipse cx="59" cy="74" rx="7.5" ry="5.5" fill="#FF8C69"/><circle cx="59" cy="59" r="39" fill="none" stroke="#E07B00" stroke-width="3"/><text x="80" y="28" font-size="20" fill="#FFB347">♪</text><text x="16" y="25" font-size="15" fill="#FFB347">♫</text></svg>`,
+  volcano:`<svg width="108" height="116" viewBox="0 0 108 116" fill="none"><path d="M38 20 Q32 10 38 2" stroke="#FF9B94" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M54 17 Q48 6 54 -1" stroke="#FF9B94" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M70 20 Q76 10 70 2" stroke="#FF9B94" stroke-width="3" stroke-linecap="round" fill="none"/><circle cx="54" cy="64" r="40" fill="#FFA89E"/><circle cx="54" cy="62" r="37" fill="#FFBAB3"/><ellipse cx="38" cy="70" rx="9" ry="6" fill="#FF7B70" opacity=".5"/><ellipse cx="70" cy="70" rx="9" ry="6" fill="#FF7B70" opacity=".5"/><path d="M36 48 L46 53" stroke="#C0392B" stroke-width="3.5" stroke-linecap="round"/><path d="M72 48 L62 53" stroke="#C0392B" stroke-width="3.5" stroke-linecap="round"/><circle cx="43" cy="59" r="7" fill="#2C1010"/><circle cx="65" cy="59" r="7" fill="#2C1010"/><circle cx="46" cy="56" r="2.8" fill="white"/><circle cx="68" cy="56" r="2.8" fill="white"/><path d="M40 73 L44 70 L54 74 L64 70 L68 73" stroke="#C0392B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="54" cy="62" r="37" fill="none" stroke="#C0392B" stroke-width="3"/></svg>`,
+  dandelion:`<svg width="106" height="116" viewBox="0 0 106 116" fill="none"><ellipse cx="53" cy="14" rx="7" ry="13" fill="#5AC97A" transform="rotate(-18 53 14)"/><ellipse cx="53" cy="14" rx="7" ry="13" fill="#3DB55E" transform="rotate(12 53 14)"/><circle cx="53" cy="64" r="40" fill="#C8F5DC"/><circle cx="53" cy="62" r="37" fill="#D8FADF"/><ellipse cx="38" cy="70" rx="8" ry="5.5" fill="#7DE0A0" opacity=".55"/><ellipse cx="68" cy="70" rx="8" ry="5.5" fill="#7DE0A0" opacity=".55"/><path d="M40 56 Q46 49 52 56" stroke="#1A5C2C" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M54 56 Q60 49 66 56" stroke="#1A5C2C" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M39 70 Q53 80 67 70" stroke="#1A5C2C" stroke-width="2.5" stroke-linecap="round" fill="none"/><circle cx="53" cy="62" r="37" fill="none" stroke="#2CA050" stroke-width="3"/><circle cx="84" cy="30" r="4.5" fill="#D0F5E0" stroke="#4ABD72" stroke-width="2"/><path d="M84 25 Q81 18 84 13" stroke="#4ABD72" stroke-width="2" stroke-linecap="round" fill="none"/></svg>`
+};
+
+const TYPES=[
+  {key:'ghost',
+   name:"유령 방구형",
+   sub:"무음 모드인데 냄새 알림은 ON",
+   glow:"#8B5FD4",
+   /* 유형별 시그니처 테마 팔레트 */
+   theme:{
+     accent:'#6B40C8',       /* 포인트 — 딥 퍼플 */
+     accentMid:'#8B5FD4',
+     accentLight:'#A87EE8',
+     accentPale:'#F0EAFF',
+     accentDim:'rgba(107,64,200,.1)',
+     heroFrom:'#2D1B6B',
+     heroTo:'#6B40C8',
+     barFrom:'#8B5FD4',
+     barTo:'#A87EE8',
+     tagBorder:'#8B5FD4',
+     tagColor:'#6B40C8',
+     navyOverride:'#2D1B6B',
+   },
+   tags:[{t:"장 속 주민 감소",a:1},{t:"냄새 주범균 과다",a:0},{t:"유익균 부족",a:0}],
+   pct:"28%",
+   /* Toss 자기관련성 */
+   pop:"<strong>10명 중 3명</strong>이 이 유형. 좋은 균이 줄면 냄새 나쁜 균이 판을 쳐요.",
+   /* PP: Casual — 전문용어 없음 */
+   bars:[{n:"장 속 주민 다양성",v:28},{n:"좋은 균 비율",v:22},{n:"장 운동 속도",v:55}],
+   sci:"냄새의 주범은 황화수소. <strong>좋은 균(유익균)이 많으면 냄새 나쁜 균을 밀어내서</strong> 방귀 냄새가 줄어들어요. 좋은 균의 먹이(프리바이오틱스)를 주면 4주 내 변화를 느낄 수 있어요.",
+   ref:"Macfarlane et al., 2006 · J. Appl. Microbiol + Silk et al., 2009 · Alimentary Pharmacology",
+   chips:["조용한데 냄새 강렬한 방귀","피부 트러블이 잦음","자도 피곤한 느낌","단거·밀가루가 자꾸 당김"],
+   /* 언어유희 솔루션 */
+   solT:"냄새 알림, 이제 꺼도 됩니다",
+   solD:"일시적 공기청정제 말고, <strong>냄새 균을 이겨낼 좋은 균의 밥(균밥)을 직접 공급</strong>해야 해요. XOS와 GOS는 좋은 균의 먹이가 되어 4주 안에 장 환경을 바꿔요.",
+   ingr:["XOS (자일로올리고당)","GOS (갈락토올리고당)","유익균 증식"],
+   rxNote:"냄새 유발균 억제 목적. 매일 1포 섭취로 좋은 균의 장악력을 높일 것. 장담합니다.",
+   foodGood:[
+     {e:"🧅",n:"양파·마늘",w:"FOS 풍부 — 유익균 최애 먹이"},
+     {e:"🫐",n:"블루베리",w:"폴리페놀이 냄새균 억제"},
+     {e:"🥦",n:"브로콜리",w:"황 해독 효소 활성화"},
+     {e:"🫙",n:"김치·낫토",w:"살아있는 유익균 직접 보충"}
+   ],
+   foodBad:[
+     {e:"🥩",n:"붉은 고기",w:"황화수소 생성균의 밥"},
+     {e:"🍺",n:"술",w:"유익균 집단 학살"},
+     {e:"🍰",n:"설탕·단것",w:"나쁜 균 폭발 성장"},
+     {e:"🧀",n:"가공치즈",w:"황 함량 높아 냄새 심화"}
+   ]},
+  {key:'jazz',
+   name:"즉흥 재즈 방구형",
+   sub:"계획도 리듬도 없는 나의 장",
+   glow:"#E07B00",
+   theme:{
+     accent:'#D46800',
+     accentMid:'#E07B00',
+     accentLight:'#F5A31F',
+     accentPale:'#FFF4E0',
+     accentDim:'rgba(212,104,0,.1)',
+     heroFrom:'#5C2D00',
+     heroTo:'#D46800',
+     barFrom:'#E07B00',
+     barTo:'#F5A31F',
+     tagBorder:'#E07B00',
+     tagColor:'#D46800',
+     navyOverride:'#5C2D00',
+   },
+   tags:[{t:"장 속 불균형",a:1},{t:"변비↔설사 반복",a:0},{t:"불규칙 배변",a:0}],
+   pct:"31%",
+   pop:"<strong>가장 흔한 유형</strong>. 장 속 좋은 균과 나쁜 균의 비율이 불안정한 상태예요.",
+   bars:[{n:"장 속 주민 다양성",v:42},{n:"좋은 균 비율",v:38},{n:"장 운동 규칙성",v:40}],
+   sci:"장 속 균형이 깨지면 <strong>배가 리듬 없이 변비와 설사를 반복</strong>해요. 프리바이오틱스 4주 섭취 시 장 불편감 42%, 불규칙 배변 35% 감소가 임상에서 확인됐어요.",
+   ref:"Silk et al., 2009 · Alimentary Pharmacology & Therapeutics",
+   chips:["변비와 설사를 번갈아감","식후 더부룩함","가스가 수시로 참","컨디션 날마다 천차만별"],
+   /* 언어유희 */
+   solT:"즉흥 연주는 무대에서만, 장은 규칙적으로",
+   solD:"FOS는 <strong>장이 규칙적으로 움직이도록 리듬을 만들어주고</strong>, GOS는 좋은 균 수를 늘려 장 환경을 안정시켜요.",
+   ingr:["FOS (장 운동 정상화)","GOS (좋은 균 증식)","단쇄지방산 생성"],
+   rxNote:"장 운동 리듬 정상화 목적. 매일 같은 시간 1포 섭취로 장에 루틴을 만들어줄 것.",
+   foodGood:[
+     {e:"🍠",n:"고구마",w:"변비엔 수용성, 설사엔 불용성 섬유질"},
+     {e:"🥣",n:"오트밀",w:"베타글루칸이 장 운동 리듬 안정"},
+     {e:"🍌",n:"바나나 (잘 익은 것)",w:"펙틴이 장 점막 보호"},
+     {e:"🫘",n:"검은콩·렌틸",w:"복합 식이섬유로 장 타이밍 조절"}
+   ],
+   foodBad:[
+     {e:"☕",n:"커피·카페인",w:"장 수축 과자극 → 급한 설사"},
+     {e:"🥛",n:"우유 (유당불내증)",w:"가스 폭탄 트리거"},
+     {e:"🌶️",n:"매운 음식 과다",w:"장 점막 자극 → 리듬 붕괴"},
+     {e:"🍟",n:"튀김·기름진 것",w:"소화 지연 → 불규칙 심화"}
+   ]},
+  {key:'volcano',
+   name:"화산 폭발 방구형",
+   sub:"뜨거운 내면의 소유자 (장 한정)",
+   glow:"#C0392B",
+   theme:{
+     accent:'#C0392B',
+     accentMid:'#D44030',
+     accentLight:'#E8504A',
+     accentPale:'#FFF0EE',
+     accentDim:'rgba(192,57,43,.1)',
+     heroFrom:'#5C0A05',
+     heroTo:'#C0392B',
+     barFrom:'#C0392B',
+     barTo:'#E8504A',
+     tagBorder:'#C0392B',
+     tagColor:'#C0392B',
+     navyOverride:'#5C0A05',
+   },
+   tags:[{t:"장-뇌 연결 예민",a:1},{t:"스트레스 반응성",a:0},{t:"과민성 장 의심",a:0}],
+   pct:"22%",
+   pop:"<strong>특히 30~40대 직장인에게 많은 유형</strong>. 스트레스가 배로 바로 내려와요.",
+   bars:[{n:"뇌-장 연결 안정성",v:25},{n:"좋은 균 비율",v:45},{n:"장 벽 투과성 (↓낮을수록 건강)",v:72}],
+   sci:"스트레스 호르몬이 장 벽을 약하게 만들어 <strong>'장 누수'가 생겨요</strong>. 좋은 균이 많으면 기분 조절 신호도 안정되어 스트레스 반응이 줄어들어요.",
+   ref:"Cryan & Dinan, 2012 · Nature Reviews Neuroscience",
+   chips:["스트레스 → 즉각 복통·방귀","갑작스러운 설사","긴장하면 특히 심함","잠들기 전 복부 팽만"],
+   solT:"장이 진정되면 마음도 진정돼요",
+   solD:"GOS는 <strong>장 벽을 강화하고 뇌-장 연결을 안정</strong>시켜요. 빠른 효과보다 3~4주 꾸준한 섭취가 핵심인 유형이에요.",
+   ingr:["GOS (장 벽 강화)","좋은 균 증식","뇌-장 연결 안정"],
+   rxNote:"스트레스성 과민 반응 완화 목적. 매일 루틴 섭취가 중요. 꾸준함이 처방의 핵심.",
+   foodGood:[
+     {e:"🐟",n:"연어·고등어",w:"오메가3가 장 염증 진화"},
+     {e:"🥬",n:"시금치·케일",w:"마그네슘이 장 근육 이완"},
+     {e:"🍵",n:"녹차·캐모마일",w:"L-테아닌이 장-뇌 긴장 완화"},
+     {e:"🥑",n:"아보카도",w:"좋은 지방으로 장 벽 재건"}
+   ],
+   foodBad:[
+     {e:"☕",n:"커피 과다",w:"코르티솔 상승 → 장 더 예민"},
+     {e:"🍺",n:"술",w:"장 벽 직접 손상"},
+     {e:"🌶️",n:"매운 음식",w:"예민한 장 점막 추가 자극"},
+     {e:"🍩",n:"정제 탄수화물",w:"혈당 스파이크 → 장 스트레스"}
+   ]},
+  {key:'dandelion',
+   name:"민들레 방구형",
+   sub:"장 건강 엘리트, 균형의 달인",
+   glow:"#1A8A58",
+   theme:{
+     accent:'#1A8A58',
+     accentMid:'#25A86C',
+     accentLight:'#3DC47F',
+     accentPale:'#E3F5EE',
+     accentDim:'rgba(26,138,88,.1)',
+     heroFrom:'#0A3D22',
+     heroTo:'#1A8A58',
+     barFrom:'#25A86C',
+     barTo:'#3DC47F',
+     tagBorder:'#1A8A58',
+     tagColor:'#1A8A58',
+     navyOverride:'#0A3D22',
+   },
+   tags:[{t:"장 속 균형 양호",a:1},{t:"예방 관리 필요",a:0},{t:"유지형",a:0}],
+   pct:"19%",
+   pop:"<strong>상위 20%의 장 건강 유지자</strong>. 지금 상태 유지가 곧 투자예요.",
+   bars:[{n:"장 속 주민 다양성",v:75},{n:"좋은 균 비율",v:70},{n:"장 운동 규칙성",v:78}],
+   sci:"지금 좋은 장이라도 <strong>항생제 한 번, 스트레스 기간 하나로 6개월간 흔들릴 수 있어요</strong>. 지금 상태에서 균밥을 주면 좋은 균의 생존율이 더 높아져요.",
+   ref:"Dethlefsen & Relman, 2011 · Science + Sonnenburg et al., 2021 · Cell",
+   chips:["규칙적인 배변","가스와 냄새 심하지 않음","식후 편안한 편","전반적으로 활력 있음"],
+   solT:"잘 키운 장, 지금이 투자 적기",
+   solD:"증상이 없을 때 관리하는 게 가장 효율적이에요. XOS+GOS+FOS 복합은 <strong>현재의 장 속 주민들을 더 튼튼하게</strong> 만들어줘요.",
+   ingr:["XOS+GOS+FOS 균형 복합","매일 1포 루틴","장기 복용 최적형"],
+   rxNote:"현재 상태 강화·유지 목적. 흔들리기 전에 지키는 것이 가장 저렴한 건강 관리.",
+   foodGood:[
+     {e:"🥗",n:"다양한 채소 샐러드",w:"주민 다양성 유지의 핵심"},
+     {e:"🍇",n:"적포도·베리류",w:"폴리페놀로 좋은 균 강화"},
+     {e:"🌾",n:"통곡물·현미",w:"식이섬유로 장 속 주민 먹이"},
+     {e:"🥜",n:"견과류 소량",w:"좋은 지방으로 장 환경 유지"}
+   ],
+   foodBad:[
+     {e:"🍔",n:"패스트푸드 자주",w:"주민 다양성 급격히 감소"},
+     {e:"🍰",n:"설탕 과다",w:"나쁜 균에게 땅 내주는 꼴"},
+     {e:"💊",n:"불필요한 항생제",w:"6개월치 노력이 한 방에"},
+     {e:"🍺",n:"술 자주",w:"지금까지 키운 장 주민 흔들림"}
+   ]}
+];
+
+let cur=0, sc=[0,0,0,0];
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(id!=='s-loading') window.scrollTo({top:0,behavior:'instant'});
+}
+
+function startQuiz(){ show('s-quiz'); renderQ(); }
+
+function renderQ(){
+  const q=Qs[cur];
+  document.getElementById('prog').style.width=((cur+1)/Qs.length*100)+'%';
+  document.getElementById('q-num').textContent=String(cur+1).padStart(2,'0')+' / '+Qs.length;
+  const c=document.getElementById('q-card');
+  c.style.cssText='opacity:0;transform:translateY(14px);transition:opacity .3s,transform .3s;';
+  c.innerHTML=`<div class="q-mood">${q.mood}</div>
+    <div class="q-text">${q.text}</div>
+    <div class="q-sub">${q.sub}</div>
+    <div class="opts">${q.opts.map((o,i)=>`
+      <button class="opt-btn" onclick="pick(${i})">
+        <span class="opt-icon" style="background:${o.bg}">${o.e}</span>
+        <span class="opt-label">${o.t}</span>
+        <span class="opt-check">✓</span>
+      </button>`).join('')}</div>`;
+  requestAnimationFrame(()=>{ c.style.opacity='1'; c.style.transform='translateY(0)'; });
+}
+
+function pick(i){
+  document.querySelectorAll('.opt-btn').forEach((b,j)=>{
+    b.classList.toggle('picked',j===i);
+    b.style.pointerEvents='none';
+  });
+  Qs[cur].opts[i].s.forEach((v,j)=>sc[j]+=v);
+  setTimeout(()=>{ cur<Qs.length-1?(cur++,renderQ()):showLoading(); },280);
+}
+
+/* PP: No More Loading — 3초 */
+function showLoading(){
+  show('s-loading');
+  let mi=0, fi=0;
+  const hlEl=document.getElementById('l-hl');
+  const subEl=document.getElementById('l-sub');
+  const factEl=document.getElementById('l-fact');
+  factEl.innerHTML=FACTS[0].b+`<span class="fact-ref">${FACTS[0].r}</span>`;
+  factEl.style.opacity='1';
+
+  const t1=setInterval(()=>{
+    mi=(mi+1)%MSGS.length;
+    hlEl.style.opacity='0';
+    setTimeout(()=>{ hlEl.innerHTML=MSGS[mi][0].replace('\n','<br>'); subEl.textContent=MSGS[mi][1]; hlEl.style.opacity='1'; },250);
+  },1000);
+
+  const t2=setInterval(()=>{
+    factEl.style.opacity='0';
+    setTimeout(()=>{
+      fi=(fi+1)%FACTS.length;
+      factEl.innerHTML=FACTS[fi].b+`<span class="fact-ref">${FACTS[fi].r}</span>`;
+      factEl.style.opacity='1';
+    },250);
+  },1000);
+
+  /* PP: No More Loading — 3초 후 결과 */
+  setTimeout(()=>{ clearInterval(t1); clearInterval(t2); showResult(); }, 3000);
+}
+
+function showResult(){
+  const ti=sc.indexOf(Math.max(...sc));
+  const t=TYPES[ti];
+
+  /* ── 유형별 시그니처 테마 적용 ── */
+  const r=document.documentElement.style;
+  const th=t.theme;
+  r.setProperty('--navy',       th.navyOverride);
+  r.setProperty('--navy-mid',   th.accent);
+  r.setProperty('--navy-light', th.accentLight);
+  r.setProperty('--green',      th.accent);
+  r.setProperty('--green-mid',  th.accentMid);
+  r.setProperty('--green-pale', th.accentPale);
+  r.setProperty('--green-dim',  th.accentDim);
+  /* 히어로 그라디언트 직접 교체 */
+  document.querySelector('.r-hero').style.background=
+    `linear-gradient(160deg,${th.heroFrom} 0%,${th.accent} 55%,${th.accentLight} 100%)`;
+  /* 프로그레스바·바차트 색상 */
+  document.querySelectorAll('.bar-fill').forEach(el=>{
+    el.style.background=`linear-gradient(90deg,${th.barFrom},${th.barTo})`;
+  });
+
+  document.getElementById('r-char').innerHTML=CHARS[t.key];
+  document.getElementById('r-name').innerHTML=t.name+`<span>${t.sub}</span>`;
+  document.getElementById('rh-glow').style.background=t.glow;
+  document.getElementById('r-tags').innerHTML=t.tags.map(tg=>`<span class="tag${tg.a?' ac':''}">#${tg.t}</span>`).join('');
+  document.getElementById('r-pct').textContent=t.pct;
+  document.getElementById('r-pop').innerHTML=t.pop;
+  document.getElementById('r-bars').innerHTML=t.bars.map(b=>`
+    <div class="bar-row">
+      <div class="bar-lbl"><span class="bar-name">${b.n}</span><span class="bar-val">${b.v}%</span></div>
+      <div class="bar-track"><div class="bar-fill" data-v="${b.v}"></div></div>
+    </div>`).join('');
+  document.getElementById('r-sci').innerHTML=t.sci;
+  document.getElementById('r-sci-ref').textContent=t.ref;
+  document.getElementById('r-chips').innerHTML=t.chips.map(c=>`<div class="chip"><div class="chip-dot"></div>${c}</div>`).join('');
+  document.getElementById('r-sol-t').textContent=t.solT;
+  document.getElementById('r-sol-d').innerHTML=t.solD;
+  document.getElementById('r-ingr').innerHTML=t.ingr.map(i=>`<span class="ingr-pill">${i}</span>`).join('');
+
+  // 음식 처방 렌더링
+  const renderFood=(items,cls)=>items.map(f=>`
+    <div class="food-item">
+      <span class="food-emoji ${cls}">${f.e}</span>
+      <span class="food-item-info">
+        <span class="food-item-name">${f.n}</span>
+        <span class="food-item-why">${f.w}</span>
+      </span>
+    </div>`).join('');
+  document.getElementById('r-food-good').innerHTML=renderFood(t.foodGood,'g');
+  document.getElementById('r-food-bad').innerHTML=renderFood(t.foodBad,'r');
+
+  // 처방전 채우기
+  const today=new Date();
+  document.getElementById('rx-type-name').textContent=t.name;
+  document.getElementById('rx-date').textContent=`${today.getFullYear()}.${String(today.getMonth()+1).padStart(2,'0')}.${String(today.getDate()).padStart(2,'0')}`;
+  document.getElementById('rx-note').textContent='📋 '+t.rxNote;
+
+  show('s-result');
+  setTimeout(()=>document.querySelectorAll('.bar-fill').forEach(el=>el.style.width=el.dataset.v+'%'), 400);
+}
+
+function goCTA(){
+  window.open('https://mkt.shopping.naver.com/link/69a6642a66b34201011a1265?nt_source=Meta&nt_medium=0319&nt_detail=%EB%B0%A9%EA%B5%AC%EC%9F%81%EC%9D%B4&nt_keyword=d','_blank');
+}
+
+function toggleAcc(id){
+  document.getElementById(id).classList.toggle('open');
+}
+
+function shareResult(){
+  const n=document.getElementById('r-name').firstChild.textContent;
+  /* 배포 후엔 window.location.href가 실제 URL로 대체됨 */
+  const pageUrl = window.location.href.includes('localhost') || window.location.protocol === 'file:'
+    ? 'https://hygut.co.kr/fart-test'  /* 실제 배포 URL로 교체 필요 */
+    : window.location.href;
+  const txt=`나 방구 유형 테스트 했는데\n"${n}" 나옴 ㅋㅋㅋ\n\n너는? 👉 ${pageUrl}`;
+  if(navigator.share){
+    navigator.share({title:'나의 방구 유형은? | HYGUT',url:pageUrl,text:`방구 유형 테스트 결과: ${n}`});
+  } else if(navigator.clipboard){
+    navigator.clipboard.writeText(txt).then(()=>alert('복사됐어!\n방구쟁이한테 보내봐 💨'));
+  }
+}
+function restart(){
+  cur=0; sc=[0,0,0,0];
+  /* 테마 리셋 */
+  const r=document.documentElement.style;
+  r.setProperty('--navy','#1A3561');
+  r.setProperty('--navy-mid','#2B5092');
+  r.setProperty('--navy-light','#4A7CC7');
+  r.setProperty('--green','#1A8A58');
+  r.setProperty('--green-mid','#25A86C');
+  r.setProperty('--green-pale','#E3F5EE');
+  r.setProperty('--green-dim','rgba(26,138,88,.1)');
+  show('s-intro');
+}
+</script>
+</body>
+</html>
