@@ -117,8 +117,11 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
 .opt-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;transition:transform .18s;}
 .opt-label{flex:1;font-size:14px;font-weight:600;color:var(--ink);}
 .opt-check{width:20px;height:20px;border-radius:99px;background:var(--green);display:none;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:#fff;font-weight:700;}
-.opt-btn:hover{border-color:var(--navy-light);background:var(--surface2);transform:translateX(5px);box-shadow:0 4px 14px rgba(26,53,97,.1);}
-.opt-btn:hover .opt-icon{transform:scale(1.12) rotate(-4deg);}
+/* 터치 기기에서는 hover 스타일 완전 비활성 */
+@media (hover: hover) {
+  .opt-btn:hover{border-color:var(--navy-light);background:var(--surface2);transform:translateX(5px);box-shadow:0 4px 14px rgba(26,53,97,.1);}
+  .opt-btn:hover .opt-icon{transform:scale(1.12) rotate(-4deg);}
+}
 /* 모바일: focus 잔상 제거 */
 .opt-btn:focus{outline:none;}
 .opt-btn:focus:not(:focus-visible){
@@ -908,21 +911,22 @@ function renderQ(){
     c.style.opacity='1';
     setTimeout(()=>{ c.style.pointerEvents=''; }, 280);
   });
+  /* 페이지 상단으로 — 손가락 위치와 버튼 위치 분리 */
+  window.scrollTo({top:0, behavior:'instant'});
 }
 
 function pick(i){
-  /* 터치한 버튼 즉시 blur — 모바일 focus 잔상 방지 */
   if(document.activeElement) document.activeElement.blur();
-
-  const optsEl = document.querySelector('.opts');
-  if(optsEl) optsEl.classList.add('no-touch');
 
   document.querySelectorAll('.opt-btn').forEach((b,j)=>{
     b.classList.toggle('picked',j===i);
     b.style.pointerEvents='none';
   });
   Qs[cur].opts[i].s.forEach((v,j)=>sc[j]+=v);
-  setTimeout(()=>{ cur<Qs.length-1?(cur++,renderQ()):showLoading(); },280);
+
+  /* 모바일 터치가 완전히 끝난 후 렌더링 — 잔상 방지 */
+  const next = ()=>{ cur<Qs.length-1?(cur++,renderQ()):showLoading(); };
+  setTimeout(next, 600);
 }
 
 /* PP: No More Loading — 3초 */
