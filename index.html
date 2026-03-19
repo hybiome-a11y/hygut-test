@@ -892,7 +892,11 @@ function renderQ(){
     c.style.opacity='1';
     c.style.transform='translateY(0)';
     /* 전환 완료 후 pointer-events 복구 — hover 잔상 방지 */
-    setTimeout(()=>{ c.style.pointerEvents=''; }, 350);
+    setTimeout(()=>{
+      c.style.pointerEvents='';
+      /* 모바일: 손가락 위치에서 새 버튼이 :active 되는 거 방지 — 스크롤로 손가락과 분리 */
+      c.scrollIntoView({behavior:'smooth', block:'start'});
+    }, 350);
   });
 }
 
