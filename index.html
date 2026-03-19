@@ -894,7 +894,7 @@ function renderQ(){
   document.getElementById('prog').style.width=((cur+1)/Qs.length*100)+'%';
   document.getElementById('q-num').textContent=String(cur+1).padStart(2,'0')+' / '+Qs.length;
   const c=document.getElementById('q-card');
-  c.style.cssText='opacity:0;transform:translateY(14px);transition:opacity .3s,transform .3s;pointer-events:none;';
+  c.style.cssText='opacity:0;transition:opacity .22s ease;pointer-events:none;';
   c.innerHTML=`<div class="q-mood">${q.mood}</div>
     <div class="q-text">${q.text}</div>
     <div class="q-sub">${q.sub}</div>
@@ -906,13 +906,7 @@ function renderQ(){
       </button>`).join('')}</div>`;
   requestAnimationFrame(()=>{
     c.style.opacity='1';
-    c.style.transform='translateY(0)';
-    /* 전환 완료 후 pointer-events 복구 — hover 잔상 방지 */
-    setTimeout(()=>{
-      c.style.pointerEvents='';
-      /* 모바일: 손가락 위치에서 새 버튼이 :active 되는 거 방지 — 스크롤로 손가락과 분리 */
-      c.scrollIntoView({behavior:'smooth', block:'start'});
-    }, 350);
+    setTimeout(()=>{ c.style.pointerEvents=''; }, 280);
   });
 }
 
